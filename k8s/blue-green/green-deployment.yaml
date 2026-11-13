@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthcare-green
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: healthcare-green
+  template:
+    metadata:
+      labels:
+        app: healthcare-green
+        version: green
+    spec:
+      containers:
+        - name: healthcare-container
+          image: raadhesh/healthcare-app:1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
