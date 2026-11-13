@@ -1,0 +1,154 @@
+
+pipeline {
+    agent any
+
+    environment {
+        PATH = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        DOCKER_IMAGE = 'raadhesh/healthcare-app'
+        GREEN_DEPLOYMENT = 'healthcare-green'
+        GREEN_CONTAINER = 'healthcare-container'
+        K8S_SERVICE = 'healthcare-service'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                echo 'Source code checked out successfully'
+            }
+        }
+
+        stage('Build and Push Green Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_TOKEN'
+                )]) {
+                    sh '''
+                        set -e
+
+                        export DOCKER_CONFIG=$(mktemp -d)
+                        trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+
+                        IMAGE_TAG="bg-${BUILD_NUMBER}"
+
+                        docker build \
+                            -t ${DOCKER_IMAGE}:${IMAGE_TAG} ./app
+
+                        echo "$DOCKER_TOKEN" | docker login \
+                            -u "$DOCKER_USER" --password-stdin
+
+                        docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
+
+                        echo "Published ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy Green') {
+            steps {
+                sh '''
+                    set -e
+
+                    IMAGE_TAG="bg-${BUILD_NUMBER}"
+
+                    kubectl set image \
+                        deployment/${GREEN_DEPLOYMENT} \
+                        ${GREEN_CONTAINER}=${DOCKER_IMAGE}:${IMAGE_TAG}
+
+                    kubectl rollout status \
+                        deployment/${GREEN_DEPLOYMENT} \
+                        --timeout=180s
+                '''
+            }
+        }
+
+        stage('Test Green') {
+            steps {
+                sh '''
+                    set -e
+
+                    kubectl port-forward \
+                        deployment/${GREEN_DEPLOYMENT} 18085:80 \
+                        > /tmp/medicore-green-test.log 2>&1 &
+
+                    PF_PID=$!
+                    trap 'kill $PF_PID 2>/dev/null || true' EXIT
+
+                    for i in $(seq 1 20); do
+                        if curl -fsS http://127.0.0.1:18085/ \
+                            -o /tmp/medicore-green-test.html; then
+                            break
+                        fi
+                        sleep 2
+                    done
+
+                    grep -q "GREEN" /tmp/medicore-green-test.html
+
+                    echo "Green environment health check passed"
+                '''
+            }
+        }
+
+        stage('Switch Traffic to Green') {
+            steps {
+                sh '''
+                    set -e
+
+                    kubectl patch service ${K8S_SERVICE} \
+                        -p '{"spec":{"selector":{"app":"healthcare-green"}}}'
+
+                    kubectl get endpoints ${K8S_SERVICE}
+                    echo "Production traffic switched to Green"
+                '''
+            }
+        }
+
+        stage('Verify Production') {
+            steps {
+                sh '''
+                    set -e
+
+                    kubectl port-forward \
+                        service/${K8S_SERVICE} 18086:80 \
+                        > /tmp/medicore-production-test.log 2>&1 &
+
+                    PF_PID=$!
+                    trap 'kill $PF_PID 2>/dev/null || true' EXIT
+
+                    for i in $(seq 1 20); do
+                        if curl -fsS http://127.0.0.1:18086/ \
+                            -o /tmp/medicore-production.html; then
+                            break
+                        fi
+                        sleep 2
+                    done
+
+                    grep -q "GREEN" /tmp/medicore-production.html
+
+                    echo "Production verification successful"
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Blue-Green deployment completed successfully!'
+        }
+
+        failure {
+            echo 'Deployment failed. Restoring production traffic to Blue.'
+
+            sh '''
+                kubectl patch service ${K8S_SERVICE} \
+                    -p '{"spec":{"selector":{"app":"healthcare"}}}' \
+                    || true
+
+                echo "Rollback to Blue attempted."
+            '''
+        }
+    }
+}
