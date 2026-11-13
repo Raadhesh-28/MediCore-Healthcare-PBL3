@@ -28,9 +28,6 @@ pipeline {
                     sh '''
                         set -e
 
-                        export DOCKER_CONFIG=$(mktemp -d)
-                        trap 'rm -rf "$DOCKER_CONFIG"' EXIT
-
                         IMAGE_TAG="bg-${BUILD_NUMBER}"
 
                         docker build \
@@ -40,6 +37,8 @@ pipeline {
                             -u "$DOCKER_USER" --password-stdin
 
                         docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
+
+                        docker logout
 
                         echo "Published ${DOCKER_IMAGE}:${IMAGE_TAG}"
                     '''
