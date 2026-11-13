@@ -46,6 +46,27 @@ pipeline {
             }
         }
 
+
+        stage('Security Scan') {
+            steps {
+                sh '''
+                    set -e
+
+                    IMAGE_TAG="bg-${BUILD_NUMBER}"
+
+                    echo "Scanning ${DOCKER_IMAGE}:${IMAGE_TAG}"
+
+                    trivy image \
+                        --exit-code 1 \
+                        --severity HIGH,CRITICAL \
+                        ${DOCKER_IMAGE}:${IMAGE_TAG}
+
+                    echo "Security scan passed. No HIGH or CRITICAL vulnerabilities."
+                '''
+            }
+        }
+        
+
         stage('Deploy Green') {
             steps {
                 sh '''
