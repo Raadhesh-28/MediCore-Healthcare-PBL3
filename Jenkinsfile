@@ -3,6 +3,7 @@ pipeline {
     agent any
 
     environment {
+        PATH = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
         DOCKER_IMAGE = 'raadhesh/healthcare-app'
         K8S_DEPLOYMENT = 'healthcare-deployment'
         K8S_CONTAINER = 'healthcare-container'
