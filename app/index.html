@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediCore | Healthcare Management</title>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap");
+
+      :root {
+        --navy: #14243b;
+        --blue: #3478f6;
+        --light-blue: #edf4ff;
+        --bg: #f5f7fb;
+        --text: #263449;
+        --muted: #8491a5;
+        --border: #e9edf3;
+        --green: #159b72;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* SIDEBAR */
+
+      .sidebar {
+        width: 245px;
+        background: var(--navy);
+        color: white;
+        padding: 28px 18px;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+
+      .logo {
+        font-size: 23px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        padding: 0 12px;
+        margin-bottom: 48px;
+      }
+
+      .logo span {
+        color: #62a0ff;
+      }
+
+      .section-label {
+        font-size: 10px;
+        color: #8796aa;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        padding: 0 13px;
+        margin-bottom: 13px;
+      }
+
+      .nav-item {
+        display: flex;
+        gap: 13px;
+        align-items: center;
+        padding: 13px;
+        color: #b7c3d3;
+        border-radius: 9px;
+        margin-bottom: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background: #273d5d;
+        color: white;
+      }
+
+      .nav-item.active {
+        border-left: 3px solid #62a0ff;
+      }
+
+      .nav-icon {
+        width: 20px;
+        text-align: center;
+        font-size: 17px;
+      }
+
+      .sidebar-bottom {
+        margin-top: auto;
+        border-top: 1px solid #30425b;
+        padding: 22px 12px 0;
+      }
+
+      .profile {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #4778bd;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .profile small {
+        display: block;
+        color: #aab7c9;
+        margin-top: 3px;
+      }
+
+      /* MAIN CONTENT */
+
+      .main {
+        flex: 1;
+        padding: 32px 38px;
+        min-width: 0;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 34px;
+        gap: 15px;
+      }
+
+      .topbar h1 {
+        font-size: 25px;
+        letter-spacing: -0.7px;
+      }
+
+      .topbar p {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 5px;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+      }
+
+      .icon-button {
+        border: 1px solid var(--border);
+        background: white;
+        border-radius: 9px;
+        padding: 10px 13px;
+        cursor: pointer;
+      }
+
+      .version {
+        background: #e9f2ff;
+        color: #2368d8;
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 8px 12px;
+      }
+
+      /* WELCOME */
+
+      .welcome {
+        background: linear-gradient(110deg, #2463cf, #4c91fa);
+        color: white;
+        border-radius: 14px;
+        padding: 27px 30px;
+        margin-bottom: 26px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .welcome h2 {
+        font-size: 21px;
+        margin-bottom: 8px;
+      }
+
+      .welcome p {
+        font-size: 13px;
+        color: #e2edff;
+      }
+
+      .welcome-icon {
+        font-size: 55px;
+        opacity: 0.8;
+      }
+
+      /* STAT CARDS */
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 17px;
+        margin-bottom: 26px;
+      }
+
+      .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 21px;
+      }
+
+      .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 19px;
+      }
+
+      .stat-icon {
+        width: 39px;
+        height: 39px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        font-size: 19px;
+      }
+
+      .blue {
+        background: #eaf2ff;
+      }
+      .purple {
+        background: #f1edff;
+      }
+      .green {
+        background: #e6f7f0;
+      }
+      .orange {
+        background: #fff2e5;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .stat-number {
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      .stat-change {
+        font-size: 11px;
+        color: var(--green);
+        margin-top: 7px;
+      }
+
+      /* SECTION HEADERS */
+
+      .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+      }
+
+      .section-heading h3 {
+        font-size: 16px;
+      }
+
+      .section-heading a {
+        color: var(--blue);
+        font-size: 12px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      /* TABLE */
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 20px;
+      }
+
+      .table-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        min-width: 520px;
+      }
+
+      th {
+        background: #fafbfd;
+        color: var(--muted);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        padding: 15px 17px;
+      }
+
+      td {
+        padding: 16px 17px;
+        border-top: 1px solid var(--border);
+        font-size: 12px;
+      }
+
+      .patient {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+      }
+
+      .patient-avatar {
+        width: 31px;
+        height: 31px;
+        background: #edf2fa;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+      }
+
+      .status {
+        border-radius: 20px;
+        padding: 5px 9px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .status.active {
+        background: #e6f7ef;
+        color: #159b72;
+      }
+
+      .status.pending {
+        background: #fff4df;
+        color: #c58a24;
+      }
+
+      /* APPOINTMENTS */
+
+      .appointments {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .appointment {
+        display: flex;
+        gap: 12px;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .appointment:last-child {
+        border-bottom: none;
+      }
+
+      .time {
+        background: #edf4ff;
+        color: #3478f6;
+        padding: 9px;
+        height: fit-content;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .appointment h4 {
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+
+      .appointment p {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      /* FOOTER */
+
+      .footer {
+        margin-top: 28px;
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 11px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .live {
+        color: var(--green);
+        font-weight: 700;
+      }
+
+      /* RESPONSIVE */
+
+      @media (max-width: 1050px) {
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 650px) {
+        .sidebar {
+          width: 65px;
+          padding: 20px 8px;
+        }
+        .logo {
+          font-size: 0;
+          padding: 0 12px;
+          margin-bottom: 40px;
+        }
+        .logo:first-letter {
+          font-size: 23px;
+        }
+        .section-label,
+        .nav-item span:not(.nav-icon),
+        .profile > div:last-child {
+          display: none;
+        }
+        .nav-item {
+          justify-content: center;
+          padding: 13px 5px;
+        }
+        .sidebar-bottom {
+          padding: 15px 5px 0;
+        }
+        .main {
+          padding: 22px 14px;
+        }
+        .topbar h1 {
+          font-size: 19px;
+        }
+        .stats {
+          gap: 10px;
+        }
+        .card {
+          padding: 14px;
+        }
+        .stat-number {
+          font-size: 22px;
+        }
+        .welcome {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo">Medi<span>Core.</span></div>
+
+        <div class="section-label">WORKSPACE</div>
+
+        <div class="nav-item active">
+          <span class="nav-icon">▦</span>
+          <span>Dashboard</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">♙</span>
+          <span>Patients</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">▣</span>
+          <span>Appointments</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">▤</span>
+          <span>Medical Records</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">♧</span>
+          <span>Departments</span>
+        </div>
+
+        <div class="section-label" style="margin-top: 35px">MANAGEMENT</div>
+
+        <div class="nav-item">
+          <span class="nav-icon">▥</span>
+          <span>Reports</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">⚙</span>
+          <span>Settings</span>
+        </div>
+
+        <div class="sidebar-bottom">
+          <div class="profile">
+            <div class="avatar">AD</div>
+            <div>
+              <strong style="font-size: 12px">Administrator</strong>
+              <small>Hospital Admin</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back! Here's what's happening today.</p>
+          </div>
+
+          <div class="top-actions">
+            <span class="version" id="version">BLUE · v1.0</span>
+            <button class="icon-button" aria-label="Notifications">♧</button>
+          </div>
+        </header>
+
+        <!-- WELCOME -->
+        <section class="welcome">
+          <div>
+            <h2>Good day, Administrator 👋</h2>
+            <p>Here's your hospital's operational overview.</p>
+          </div>
+          <div class="welcome-icon">✚</div>
+        </section>
+
+        <!-- STATISTICS -->
+        <section class="stats">
+          <div class="card">
+            <div class="stat-top">
+              <span class="stat-label">Total Patients</span>
+              <div class="stat-icon blue">♙</div>
+            </div>
+            <div class="stat-number">2,847</div>
+            <div class="stat-change">↑ 12.5% this month</div>
+          </div>
+
+          <div class="card">
+            <div class="stat-top">
+              <span class="stat-label">Appointments</span>
+              <div class="stat-icon purple">▣</div>
+            </div>
+            <div class="stat-number">184</div>
+            <div class="stat-change">↑ 8.2% this week</div>
+          </div>
+
+          <div class="card">
+            <div class="stat-top">
+              <span class="stat-label">Active Doctors</span>
+              <div class="stat-icon green">✚</div>
+            </div>
+            <div class="stat-number">48</div>
+            <div class="stat-change">Across 8 departments</div>
+          </div>
+
+          <div class="card">
+            <div class="stat-top">
+              <span class="stat-label">Available Beds</span>
+              <div class="stat-icon orange">▤</div>
+            </div>
+            <div class="stat-number">126</div>
+            <div class="stat-change">Out of 200 total beds</div>
+          </div>
+        </section>
+
+        <!-- PATIENTS AND APPOINTMENTS -->
+        <div class="content-grid">
+          <section>
+            <div class="section-heading">
+              <h3>Recent Patients</h3>
+              <a href="#">View all →</a>
+            </div>
+
+            <div class="table-card">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Patient</th>
+                      <th>Patient ID</th>
+                      <th>Department</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="patient">
+                          <div class="patient-avatar">JD</div>
+                          John Doe
+                        </div>
+                      </td>
+                      <td>#PT-1001</td>
+                      <td>Cardiology</td>
+                      <td><span class="status active">Active</span></td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <div class="patient">
+                          <div class="patient-avatar">JS</div>
+                          Jane Smith
+                        </div>
+                      </td>
+                      <td>#PT-1002</td>
+                      <td>Neurology</td>
+                      <td><span class="status pending">Pending</span></td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <div class="patient">
+                          <div class="patient-avatar">RB</div>
+                          Robert Brown
+                        </div>
+                      </td>
+                      <td>#PT-1003</td>
+                      <td>Orthopedics</td>
+                      <td><span class="status active">Active</span></td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <div class="patient">
+                          <div class="patient-avatar">EW</div>
+                          Emily Wilson
+                        </div>
+                      </td>
+                      <td>#PT-1004</td>
+                      <td>Dermatology</td>
+                      <td><span class="status active">Active</span></td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <div class="patient">
+                          <div class="patient-avatar">MT</div>
+                          Michael Taylor
+                        </div>
+                      </td>
+                      <td>#PT-1005</td>
+                      <td>Cardiology</td>
+                      <td><span class="status pending">Pending</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="section-heading">
+              <h3>Upcoming Appointments</h3>
+              <a href="#">View all →</a>
+            </div>
+
+            <div class="appointments">
+              <div class="appointment">
+                <div class="time">09:30 AM</div>
+                <div>
+                  <h4>John Doe</h4>
+                  <p>Dr. Sarah Wilson · Cardiology</p>
+                </div>
+              </div>
+
+              <div class="appointment">
+                <div class="time">10:15 AM</div>
+                <div>
+                  <h4>Jane Smith</h4>
+                  <p>Dr. Michael Lee · Neurology</p>
+                </div>
+              </div>
+
+              <div class="appointment">
+                <div class="time">11:00 AM</div>
+                <div>
+                  <h4>Robert Brown</h4>
+                  <p>Dr. James Carter · Orthopedics</p>
+                </div>
+              </div>
+
+              <div class="appointment">
+                <div class="time">12:30 PM</div>
+                <div>
+                  <h4>Emily Wilson</h4>
+                  <p>Dr. Anna Davis · Dermatology</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <footer class="footer">
+          <span>© 2026 MediCore Healthcare Management</span>
+          <span class="live">● System Operational</span>
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      // Highlight selected sidebar navigation item
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          document.querySelectorAll(".nav-item").forEach((nav) => {
+            nav.classList.remove("active");
+          });
+          item.classList.add("active");
+        });
+      });
+
+      // Display the current deployment version
+      const params = new URLSearchParams(window.location.search);
+      const version = params.get("version");
+
+      if (version === "green") {
+        document.getElementById("version").textContent = "GREEN · v2.0";
+      } else {
+        document.getElementById("version").textContent = "BLUE · v1.0";
+      }
+    </script>
+  </body>
+</html>
