@@ -1,10 +1,7 @@
 
-FROM nginx:alpine
+FROM raadhesh/healthcare-app:secure-v2
 
-# Update installed Alpine packages to patched versions
-RUN apk upgrade --no-cache
-
-# Copy MediCore application
+# Copy the latest MediCore application
 COPY index.html /usr/share/nginx/html/index.html
 
 EXPOSE 80
