@@ -17,6 +17,26 @@ pipeline {
                 checkout scm
             }
         }
+        
+
+        stage('Verify Environment') {
+            steps {
+                sh '''
+                    echo "Checking user..."
+                    whoami
+
+                    echo "Checking Docker..."
+                    docker --version
+                    docker info
+
+                    echo "Checking Kubernetes..."
+                    kubectl version --client
+                    kubectl config current-context
+                    kubectl get nodes
+                '''
+            }
+        }
+
 
         stage('Build Docker Image') {
             steps {
